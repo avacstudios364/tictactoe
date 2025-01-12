@@ -80,6 +80,8 @@ def gameboard_player(game_board, l1, l2):
             button[i][j].grid(row = m, column = n) # m = rows, n = columns
     game_board.mainloop()
 
+#single player
+
 #defines the next move of computer
 def pc():
     possiblemove = []
@@ -114,15 +116,67 @@ def pc():
                 return edge[move]
 
 
-def get_text_pc(i, j, bg, l1, l2):
-    pass
+def get_text_pc(i, j, gb, l1, l2):
+    global sign
+    if board[i][j] == ' ':
+        if sign % 2 == 0:
+            l1.config(state = DISABLED)
+            l2.config(state = ACTIVE)
+            board[i][j] = 'X'
+        else:
+            button[i][j].config(state=ACTIVE)
+            l1.config(state = ACTIVE)
+            l2.config(state = DISABLED)
+            board[i][j] = 'O'
+        sign = sign + 1
+        button[i][j].config(text = board[i][j])
+    x = True
+    if winner(board,'X'):
+        gb.destroy()
+        x = False
+        box = messagebox.showinfo('Winner', 'You have beat the computer!')
+    elif winner(board,'O'):
+        gb.destroy()
+        x = False
+        box = messagebox.showinfo('Winner', 'The computer won the game')
+    elif(isfull()):
+        gb.destroy
+        x = False
+        box = messagebox.showinfo('Draw','Its a draw!')
+    if (x) == True:
+        if sign % 2 !=0:
+            move = pc()
+            button[move[0]][move[1]].config(state = DISABLED)
+            get_text_pc(move[0],move[1],gb,l1,l2)
 
 #gui of gameboard to play with computer
-def gameboard_pc(gameboard, l1, l2):
-    pass
+def gameboard_pc(game_board, l1, l2):
+    global button
+    button = []
+    for i in range(3):
+        m = 3 + i
+        button.append(i)
+        button[i] = []
 
-def withpc(gameboard):
-    pass
+        for j in range(3):
+            n = j
+            button[i].append(j)
+            get_t = partial(get_text_pc, i, j, game_board, l1, l2)
+            button[i][j] = Button(game_board, bd = 5, bg = 'green', fg = 'white',
+                                  command = get_t, height = 8, width = 8)
+            button[i][j].grid(row = m, column = n)
+    game_board.mainloop()
+            
+
+def withpc(game_board):
+    game_board.destroy()
+    game_board = Tk()
+    game_board.title('Tic Tac Toe')
+    l1 = Button(game_board, text = 'Player: X', width = 15, bg = 'red', fg = 'white')
+    l1.grid(row = 1,column = 1)
+    l2 = Button(game_board, text = 'Computer: O', width = 15, bg = 'white', state = DISABLED)
+    l2.grid(row = 2, column = 1)
+    gameboard_player(game_board, l1, l2)
 
 # to initualize the game with another player
 def withplayer(game_board):
@@ -142,6 +196,7 @@ def play():
     menu.title('Tic Tac Toe')
     wpl = partial(withplayer, menu) #wpl = withplayer
     wpc = partial(withpc, menu) #wpc = withpc
+
     headbtn = Button(menu, text = 'Welcome to Tic Tac Toe', bg = 'red', fg = 'white',
                     activeforeground = 'white', activebackground = 'red', bd = 5, width = 50)
     headbtn.pack(side = 'top')
@@ -160,8 +215,3 @@ def play():
 if __name__ == '__main__':
     play()
 
-def play():
-    pass
-
-if __name__ == '__main__':
-    play()
